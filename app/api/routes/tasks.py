@@ -10,4 +10,8 @@ from sqlalchemy.orm import selectinload
 # from app.models.task import Task, Tag, task_tags
 # from app.schemas.task import TaskCreate, TaskOut, TaskUpdate, PaginatedTasks
 
-router = APIRouter()
+router_v1 = APIRouter(prefix="/tasks")
+
+@router_v1.get("/")
+def get_tasks():
+    return JSONResponse(content={"message": "This is the GET /tasks endpoint for API v1"})
