@@ -6,7 +6,7 @@ from typing import Optional
 
 from app.configs.database import get_db
 from app.schemas.tasks import PaginatedTasks, TaskCreate, TaskResponse, TaskUpdate
-from app.services.task_service import create_task, delete_task, list_tasks, update_task, get_task
+from app.services.task_service import create_task, delete_task, list_tasks, update_task, get_task_or_404
 
 router_v1 = APIRouter(prefix="/tasks")
 
@@ -84,10 +84,8 @@ def create_task_endpoint(
 
 @router_v1.get("/{task_id}", response_model=TaskResponse)
 def get_task_by_id_endpoint(task_id: int, db: Session = Depends(get_db)):
-    task = get_task(db, int(task_id))
+    task = get_task_or_404(db, int(task_id))
     print("task found: ", task)
-    if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
 
     return TaskResponse(
         id=task.id,

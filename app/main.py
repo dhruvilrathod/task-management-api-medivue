@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.concurrency import asynccontextmanager
-from fastapi.responses import RedirectResponse
+from fastapi.exceptions import RequestValidationError, HTTPException
+from fastapi.responses import JSONResponse, RedirectResponse
 
 from app.configs.database import Base, engine
 from app.api.routes.tasks import router_v1 as tasks_api_router_v1
@@ -23,6 +24,32 @@ def init_app() -> FastAPI:
         description="A robust task management API built with FastAPI and PostgreSQL for advanced filtering, tagging and deadlines.",
         version="1.0.0",
         lifespan=lifespan
+        )
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_exception_handler(request: Request, exc: RequestValidationError):
+        errors = []
+        print(exc)
+        for err in exc.errors():
+            errors.append(err["msg"])
+        
+        return JSONResponse(
+            status_code=400,
+            content={
+                "error": "Validation failed",
+                "details": ", ".join(errors)
+            }
+        )
+
+
+    @app.exception_handler(HTTPException)
+    async def http_exception_handler(request: Request, exc: HTTPException):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "error": exc.detail,
+                "details": exc.detail
+            }
         )
 
     # Include documentation routers

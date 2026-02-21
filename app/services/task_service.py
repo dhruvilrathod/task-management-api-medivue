@@ -1,6 +1,8 @@
+from email import errors
 from typing import List, Optional
 
 from fastapi import HTTPException, status
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import asc, desc, select, func
 
@@ -94,16 +96,6 @@ def list_tasks(
     return total, tasks
 
 
-def get_task(db, task_id: int) -> Optional[Task]:
-    print("Fetching task with ID:", task_id)  # Debug statement
-    return db.execute(
-        select(Task).where(
-            Task.id == task_id,
-            Task.is_deleted == False,
-        )
-    ).scalar_one_or_none()
-
-
 
 def update_task(db, task_id: int, data):
     task = get_task_or_404(db, task_id)
@@ -149,7 +141,7 @@ def delete_task(db, task_id: int):
 
 
 
-def get_task_or_404(db, task_id: int) -> Task:
+def get_task_or_404(db, task_id: int) -> Optional[Task]:
     task = db.execute(
         select(Task).where(
             Task.id == task_id,
