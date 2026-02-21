@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, field_validator
 class TaskBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
-    priority: int = Field(default=3, ge=1, le=5)
+    priority: int = Field(ge=1, le=5)
     due_date: date
     tags: Optional[List[str]] = []
 

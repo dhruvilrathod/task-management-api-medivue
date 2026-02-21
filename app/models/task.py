@@ -28,7 +28,7 @@ class Task(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String(200), nullable=False)
     description = Column(String, nullable=True)
-    priority = Column(Integer, nullable=False, default=3)
+    priority = Column(Integer, nullable=False)
     completed = Column(Boolean, default=False, nullable=False)
     due_date = Column(Date, nullable=False)
     is_deleted = Column(Boolean, default=False, nullable=False)

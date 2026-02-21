@@ -1,14 +1,14 @@
-from sqlalchemy import Column, Integer, String, UniqueConstraint
+from sqlalchemy import Column, Index, Integer, String, UniqueConstraint, func
 from sqlalchemy.orm import relationship
 
-from app.models.base import Base
+from app.configs.database import Base
 
 
 class Tag(Base):
     __tablename__ = "tags"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False, unique=True, index=True)
+    name = Column(String(50), nullable=False)
 
     tasks = relationship(
         "Task",
@@ -18,5 +18,9 @@ class Tag(Base):
     )
 
     __table_args__ = (
-        UniqueConstraint("name", name="uq_tag_name"),
+        Index(
+            "uq_tags_name_lower",
+            func.lower(name),
+            unique=True,
+        ),
     )
